@@ -1,0 +1,50 @@
+import { Product } from '@/types/product';
+
+interface ProductCardProps {
+  product: Product;
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const formattedPrice = product.precio
+    ? new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(product.precio)
+    : null;
+
+  return (
+    <article className="product-card" id={`product-${product.id}`}>
+      <div className="product-card-image">
+        {product.imagenUrl ? (
+          <img
+            src={product.imagenUrl}
+            alt={product.nombre}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div className="product-card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span>{product.categoria}</span>
+          </div>
+        )}
+        <span className="product-card-category-badge">{product.categoria}</span>
+      </div>
+      <div className="product-card-body">
+        <h3 className="product-card-name">{product.nombre}</h3>
+        {formattedPrice ? (
+          <div className="product-card-price">
+            {formattedPrice}
+            <span className="product-card-price-label">por kg</span>
+          </div>
+        ) : (
+          <div className="product-card-no-price">Consultar precio en local</div>
+        )}
+      </div>
+    </article>
+  );
+}

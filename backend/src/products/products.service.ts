@@ -1,0 +1,76 @@
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { SheetsService } from '../sheets/sheets.service';
+import { Product, CategoryInfo } from './interfaces/product.interface';
+
+@Injectable()
+export class ProductsService {
+  private readonly logger = new Logger(ProductsService.name);
+
+  constructor(private readonly sheetsService: SheetsService) {}
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  async handleCron() {
+    this.logger.log('Refreshing products data from Google Sheets...');
+    await this.sheetsService.refreshData();
+    this.logger.log('Products data refreshed');
+  }
+
+  findAll(search?: string, category?: string): Product[] {
+    let products = this.sheetsService.getProducts();
+
+    if (category) {
+      products = products.filter(
+        (p) => p.categoria.toLowerCase() === category.toLowerCase(),
+      );
+    }
+
+    if (search) {
+      const searchLower = search.toLowerCase().trim();
+      products = products.filter(
+        (p) =>
+          p.nombre.toLowerCase().includes(searchLower) ||
+          p.categoria.toLowerCase().includes(searchLower),
+      );
+    }
+
+    return products;
+  }
+
+  findOne(id: string): Product {
+    const product = this.sheetsService
+      .getProducts()
+      .find((p) => p.id === id);
+
+    if (!product) {
+      throw new NotFoundException(`Producto con id "${id}" no encontrado`);
+    }
+
+    return product;
+  }
+
+  getCategories(): CategoryInfo[] {
+    const products = this.sheetsService.getProducts();
+    const categoryMap = new Map<string, number>();
+
+    for (const product of products) {
+      const count = categoryMap.get(product.categoria) || 0;
+      categoryMap.set(product.categoria, count + 1);
+    }
+
+    return Array.from(categoryMap.entries()).map(([nombre, cantidad]) => ({
+      nombre,
+      cantidad,
+    }));
+  }
+
+  getStats() {
+    const products = this.sheetsService.getProducts();
+    const categories = this.getCategories();
+    return {
+      totalProducts: products.length,
+      totalCategories: categories.length,
+      lastSync: this.sheetsService.getLastFetchTime(),
+    };
+  }
+}
