@@ -11,6 +11,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const [products, setProducts] = useState<Product[]>([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -105,11 +106,17 @@ export default function AdminPage() {
     );
   }
 
+  const filteredProducts = products.filter(
+    (p) =>
+      p.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      p.categoria.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <>
       <Navbar />
-      <main className="container" style={{ paddingTop: '120px', minHeight: '100vh' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <main className="container" style={{ paddingTop: '120px', minHeight: '100vh', paddingBottom: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h1>Panel de Administración</h1>
           <button 
             onClick={() => {
@@ -124,6 +131,16 @@ export default function AdminPage() {
 
         {error && <p style={{ color: 'red', marginBottom: '1rem', padding: '1rem', background: '#ffeeee', borderRadius: '0.5rem' }}>{error}</p>}
 
+        <div style={{ marginBottom: '1.5rem' }}>
+          <input
+            type="text"
+            placeholder="Buscar producto por nombre o categoría..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: '100%', padding: '1rem', border: '1px solid #c5ceae', borderRadius: '0.5rem', fontSize: '1rem', outline: 'none' }}
+          />
+        </div>
+
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', background: 'white', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
             <thead>
@@ -135,7 +152,7 @@ export default function AdminPage() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.id} style={{ borderBottom: '1px solid #e1e6d5' }}>
                   <td style={{ padding: '1rem' }}>{product.nombre}</td>
                   <td style={{ padding: '1rem' }}>{product.categoria}</td>
