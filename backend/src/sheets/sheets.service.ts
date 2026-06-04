@@ -124,6 +124,7 @@ export class SheetsService implements OnModuleInit {
               ? String(row[imgIdx]).trim()
               : null;
 
+          const imgColLetter = imgIdx !== -1 ? this.colIndexToLetter(imgIdx) : '';
           const id = this.generateId(sheetName, nombre, rowIdx);
 
           allProducts.push({
@@ -132,6 +133,11 @@ export class SheetsService implements OnModuleInit {
             categoria: sheetName,
             precio: precio && !isNaN(precio) ? precio : null,
             imagenUrl: imagenUrl || null,
+            _meta: {
+              sheetName,
+              rowNumber: rowIdx + 1,
+              imgColLetter,
+            },
           });
         }
 
@@ -160,6 +166,58 @@ export class SheetsService implements OnModuleInit {
 
   getLastFetchTime(): Date | null {
     return this.lastFetchTime;
+  }
+
+  async updateProductImage(productId: string, imageUrl: string): Promise<Product> {
+    const product = this.cachedProducts.find((p) => p.id === productId);
+    if (!product) {
+      throw new Error(`Product with ID ${productId} not found`);
+    }
+
+    const meta = product._meta;
+    if (!meta || !meta.imgColLetter) {
+      throw new Error(
+        `No se puede actualizar la imagen para ${productId}: La columna "imgURL" no existe en la pestaña "${meta?.sheetName || 'desconocida'}". Por favor creala en el Excel primero.`,
+      );
+    }
+
+    const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+    if (!this.sheets || !spreadsheetId) {
+      // In mock mode, just update cache
+      this.logger.warn(`Mock mode: updated image for ${productId} to ${imageUrl}`);
+      product.imagenUrl = imageUrl;
+      return product;
+    }
+
+    const range = `'${meta.sheetName}'!${meta.imgColLetter}${meta.rowNumber}`;
+    
+    try {
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[imageUrl]],
+        },
+      });
+
+      // Update cache
+      product.imagenUrl = imageUrl;
+      return product;
+    } catch (error) {
+      this.logger.error(`Failed to update image for ${productId} at ${range}`, error);
+      throw new Error('Error al escribir en Google Sheets');
+    }
+  }
+
+  private colIndexToLetter(index: number): string {
+    let letter = '';
+    let temp = index;
+    while (temp >= 0) {
+      letter = String.fromCharCode((temp % 26) + 65) + letter;
+      temp = Math.floor(temp / 26) - 1;
+    }
+    return letter;
   }
 
   private generateId(categoria: string, nombre: string, index: number): string {

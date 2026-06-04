@@ -73,4 +73,8 @@ export class ProductsService {
       lastSync: this.sheetsService.getLastFetchTime(),
     };
   }
+
+  async updateProductImage(id: string, imageUrl: string): Promise<Product> {
+    return this.sheetsService.updateProductImage(id, imageUrl);
+  }
 }

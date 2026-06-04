@@ -14,6 +14,29 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
   return res.json();
 }
 
+export async function updateProductImage(
+  productId: string,
+  imageUrl: string,
+  adminPassword: string,
+): Promise<Product> {
+  const res = await fetch(`${API_BASE}/api/products/${productId}/image`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${adminPassword}`,
+    },
+    body: JSON.stringify({ imageUrl }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    throw new Error(errorData?.message || 'Error al actualizar la imagen del producto');
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
 export async function getProducts(
   search?: string,
   category?: string,

@@ -4,6 +4,11 @@ export interface Product {
   categoria: string;
   precio: number | null;
   imagenUrl: string | null;
+  _meta?: {
+    sheetName: string;
+    rowNumber: number;
+    imgColLetter: string;
+  };
 }
 
 export interface CategoryInfo {
