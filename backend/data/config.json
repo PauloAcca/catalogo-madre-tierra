@@ -1,4 +1,4 @@
 {
-  "globalShowPrices": true,
+  "globalShowPrices": false,
   "productOverrides": {}
 }

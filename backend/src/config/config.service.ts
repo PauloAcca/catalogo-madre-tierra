@@ -10,7 +10,7 @@ export interface AppConfig {
 @Injectable()
 export class ConfigService implements OnModuleInit {
   private readonly logger = new Logger(ConfigService.name);
-  private config: AppConfig = { globalShowPrices: true, productOverrides: {} };
+  private config: AppConfig = { globalShowPrices: false, productOverrides: {} };
   private readonly configPath = path.join(process.cwd(), 'data', 'config.json');
 
   onModuleInit() {
@@ -28,7 +28,7 @@ export class ConfigService implements OnModuleInit {
         const fileData = fs.readFileSync(this.configPath, 'utf8');
         const parsed = JSON.parse(fileData);
         this.config = {
-          globalShowPrices: parsed.globalShowPrices ?? true,
+          globalShowPrices: parsed.globalShowPrices ?? false,
           productOverrides: parsed.productOverrides ?? {},
         };
       } else {
