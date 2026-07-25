@@ -93,8 +93,12 @@ export default function AdminPage() {
       const data = await getProducts();
       setProducts(data.data);
     } catch (err: any) {
-      alert('Error al actualizar configuración global');
+      alert(err.message || 'Error al actualizar configuración global');
       setGlobalShowPrices(!globalShowPrices); // rollback
+      if (err.message === 'Contraseña incorrecta') {
+        setIsLoggedIn(false);
+        sessionStorage.removeItem('adminPassword');
+      }
     }
   };
 
@@ -107,7 +111,11 @@ export default function AdminPage() {
         prev.map(p => p.id === product.id ? { ...p, showPrice: newValue } : p)
       );
     } catch (err: any) {
-      alert('Error al actualizar visibilidad del producto');
+      alert(err.message || 'Error al actualizar visibilidad del producto');
+      if (err.message === 'Contraseña incorrecta') {
+        setIsLoggedIn(false);
+        sessionStorage.removeItem('adminPassword');
+      }
     } finally {
       setTogglingId(null);
     }
