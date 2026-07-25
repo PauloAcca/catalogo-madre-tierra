@@ -58,7 +58,7 @@ export class SheetsService implements OnModuleInit {
       const sheetNames =
         spreadsheet.data.sheets
           ?.map((s) => s.properties?.title)
-          .filter((title): title is string => !!title) ?? [];
+          .filter((title): title is string => !!title && title.toLowerCase().trim().startsWith('costos')) ?? [];
 
       this.logger.log(`Found ${sheetNames.length} sheets: ${sheetNames.join(', ')}`);
 
@@ -125,12 +125,13 @@ export class SheetsService implements OnModuleInit {
               : null;
 
           const imgColLetter = imgIdx !== -1 ? this.colIndexToLetter(imgIdx) : '';
-          const id = this.generateId(sheetName, nombre, rowIdx);
+          const categoriaClean = sheetName.replace(/^Costos\s+/i, '').trim();
+          const id = this.generateId(categoriaClean, nombre, rowIdx);
 
           allProducts.push({
             id,
             nombre,
-            categoria: sheetName,
+            categoria: categoriaClean,
             precio: precio && !isNaN(precio) ? precio : null,
             imagenUrl: imagenUrl || null,
             _meta: {
@@ -142,7 +143,7 @@ export class SheetsService implements OnModuleInit {
         }
 
         this.logger.log(
-          `Parsed ${allProducts.filter((p) => p.categoria === sheetName).length} products from "${sheetName}"`,
+          `Parsed ${allProducts.filter((p) => p._meta?.sheetName === sheetName).length} products from "${sheetName}"`,
         );
       }
 
