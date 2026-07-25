@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <circle cx="8.5" cy="8.5" r="1.5"/>
               <polyline points="21 15 16 10 5 21"/>
             </svg>
-            <span className="placeholder-text">Estará disponible pronto</span>
+            <span className="placeholder-text">Foto disponible pronto</span>
           </div>
         )}
         <span className="product-card-category-badge">{product.categoria}</span>

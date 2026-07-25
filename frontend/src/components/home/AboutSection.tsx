@@ -15,7 +15,7 @@ export default function AboutSection() {
           </p>
           <p>
             Aquí puedes encontrar desde las frutas y verduras más frescas, alimentos 
-            saludables y naturales, hasta aquellos productos de uso diario que no pueden faltar en tu despensa. 
+            saludables y naturales, hasta aquellos productos de uso diario y de limpieza que no pueden faltar en tu hogar. 
             Nuestro objetivo es acercarte la frescura de la naturaleza junto con la comodidad 
             de tu almacén de siempre, asegurando la mejor calidad para tu familia.
           </p>
