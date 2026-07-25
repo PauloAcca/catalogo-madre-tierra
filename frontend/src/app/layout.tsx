@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import BackToTop from '@/components/ui/BackToTop';
+import { CartProvider } from '@/context/CartContext';
+import CartSidebar from '@/components/layout/CartSidebar';
 
 export const metadata: Metadata = {
   title: 'Madre Tierra — Verdulería Boutique · Almacén & Más',
@@ -44,10 +45,12 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <BackToTop />
+        <CartProvider>
+          <Navbar />
+          <main>{children}</main>
+          <CartSidebar />
+          <BackToTop />
+        </CartProvider>
       </body>
     </html>
   );

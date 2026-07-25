@@ -1,10 +1,18 @@
+'use client';
+
 import { Product } from '@/types/product';
+import { useCart } from '@/context/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { items, addToCart, updateQuantity } = useCart();
+
+  const cartItem = items.find(item => item.product.id === product.id);
+  const quantityInCart = cartItem ? cartItem.quantity : 0;
+
   const formattedPrice = product.precio
     ? new Intl.NumberFormat('es-AR', {
         style: 'currency',
@@ -43,6 +51,40 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         ) : (
           <div className="product-card-no-price">Consultar precio en local</div>
+        )}
+      </div>
+      <div className="product-card-footer">
+        {quantityInCart > 0 ? (
+          <div className="product-cart-controls">
+            <button 
+              className="qty-btn" 
+              onClick={(e) => {
+                e.preventDefault();
+                updateQuantity(product.id, quantityInCart - 1);
+              }}
+            >-</button>
+            <span className="qty-value">{quantityInCart}</span>
+            <button 
+              className="qty-btn" 
+              onClick={(e) => {
+                e.preventDefault();
+                updateQuantity(product.id, quantityInCart + 1);
+              }}
+            >+</button>
+          </div>
+        ) : (
+          <button 
+            className="product-add-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              addToCart(product, 1);
+            }}
+          >
+            Agregar
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </button>
         )}
       </div>
     </article>
