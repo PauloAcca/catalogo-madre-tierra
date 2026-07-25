@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 export default function CartSidebar() {
   const { items, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, cartTotal } = useCart();
-  const showPrices = process.env.NEXT_PUBLIC_SHOW_PRICES !== 'false';
+  const showTotal = items.length > 0 && items.every(item => item.product.showPrice !== false);
 
   // Bloquear el scroll del body cuando el carrito está abierto
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function CartSidebar() {
     items.forEach(item => {
       text += `- ${item.quantity}x ${item.product.nombre}\n`;
     });
-    if (showPrices) {
+    if (showTotal) {
       text += `\n*Total estimado: ${formattedTotal}*`;
     }
     return text;
@@ -80,7 +80,7 @@ export default function CartSidebar() {
                 </div>
                 <div className="cart-item-info">
                   <h4>{item.product.nombre}</h4>
-                  {showPrices && (
+                  {item.product.showPrice !== false && (
                     <p className="cart-item-price">
                       {item.product.precio ? `$${item.product.precio}` : 'Consultar'}
                     </p>
@@ -104,7 +104,7 @@ export default function CartSidebar() {
 
         {items.length > 0 && (
           <div className="cart-footer">
-            {showPrices && (
+            {showTotal && (
               <div className="cart-total">
                 <span>Total Estimado:</span>
                 <span>{formattedTotal}</span>

@@ -9,7 +9,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { items, addToCart, updateQuantity } = useCart();
-  const showPrices = process.env.NEXT_PUBLIC_SHOW_PRICES !== 'false';
+  const showPrices = product.showPrice !== false;
 
   const cartItem = items.find(item => item.product.id === product.id);
   const quantityInCart = cartItem ? cartItem.quantity : 0;

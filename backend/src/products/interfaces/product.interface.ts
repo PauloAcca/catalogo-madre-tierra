@@ -4,6 +4,7 @@ export interface Product {
   categoria: string;
   precio: number | null;
   imagenUrl: string | null;
+  showPrice?: boolean;
   _meta?: {
     sheetName: string;
     rowNumber: number;

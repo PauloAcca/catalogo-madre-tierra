@@ -1,13 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { SheetsService } from '../sheets/sheets.service';
+import { ConfigService } from '../config/config.service';
 import { Product, CategoryInfo } from './interfaces/product.interface';
 
 @Injectable()
 export class ProductsService {
   private readonly logger = new Logger(ProductsService.name);
 
-  constructor(private readonly sheetsService: SheetsService) {}
+  constructor(
+    private readonly sheetsService: SheetsService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCron() {
@@ -34,7 +38,13 @@ export class ProductsService {
       );
     }
 
-    return products;
+    const config = this.configService.getConfig();
+
+    return products.map(p => {
+      const override = config.productOverrides[p.id];
+      const showPrice = override !== undefined ? override : config.globalShowPrices;
+      return { ...p, showPrice };
+    });
   }
 
   findOne(id: string): Product {
@@ -46,7 +56,11 @@ export class ProductsService {
       throw new NotFoundException(`Producto con id "${id}" no encontrado`);
     }
 
-    return product;
+    const config = this.configService.getConfig();
+    const override = config.productOverrides[product.id];
+    const showPrice = override !== undefined ? override : config.globalShowPrices;
+
+    return { ...product, showPrice };
   }
 
   getCategories(): CategoryInfo[] {

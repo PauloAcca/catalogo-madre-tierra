@@ -37,6 +37,42 @@ export async function updateProductImage(
   return json.data;
 }
 
+export async function updateGlobalShowPrices(showPrices: boolean, adminPassword: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/config/global`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${adminPassword}`
+    },
+    body: JSON.stringify({ showPrices })
+  });
+  
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('Contraseña incorrecta');
+    throw new Error('Error al actualizar configuración global');
+  }
+  
+  return res.json();
+}
+
+export async function updateProductShowPrice(productId: string, showPrice: boolean | null, adminPassword: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/config/product`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${adminPassword}`
+    },
+    body: JSON.stringify({ productId, showPrice })
+  });
+  
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('Contraseña incorrecta');
+    throw new Error('Error al actualizar configuración del producto');
+  }
+  
+  return res.json();
+}
+
 export async function getProducts(
   search?: string,
   category?: string,

@@ -1,9 +1,13 @@
 import { Controller, Get, Param, Query, Body, Patch, Headers, UnauthorizedException } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { ConfigService } from '../config/config.service';
 
 @Controller('api')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('products')
   findAll(
@@ -18,6 +22,7 @@ export class ProductsController {
       meta: {
         total: products.length,
         categories: categories.map((c) => c.nombre),
+        globalShowPrices: this.configService.getConfig().globalShowPrices,
       },
     };
   }

@@ -4,6 +4,7 @@ export interface Product {
   categoria: string;
   precio: number | null;
   imagenUrl: string | null;
+  showPrice?: boolean;
 }
 
 export interface CategoryInfo {
@@ -16,6 +17,7 @@ export interface ProductsApiResponse {
   meta: {
     total: number;
     categories: string[];
+    globalShowPrices?: boolean;
   };
 }
 
