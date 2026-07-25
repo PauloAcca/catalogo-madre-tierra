@@ -4,7 +4,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 async function fetchApi<T>(endpoint: string): Promise<T> {
   const res = await fetch(`${API_BASE}${endpoint}`, {
-    next: { revalidate: 300 }, // ISR: revalidate every 5 minutes
+    cache: 'no-store', // Disable caching so updates are immediate
   });
 
   if (!res.ok) {

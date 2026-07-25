@@ -6,7 +6,7 @@ export default function ContactSection() {
           
           <div className="contact-left-col">
             <div className="contact-info-card">
-              <h3 className="contact-card-title">Nuestra Boutique</h3>
+              <h3 className="contact-card-title">Información</h3>
               <div className="contact-card-line"></div>
 
               <div className="contact-item">
@@ -45,7 +45,7 @@ export default function ContactSection() {
                 </div>
                 <div className="contact-item-content">
                   <h4>CONTACTO DIRECTO</h4>
-                  <p>+54 011 6272-0179<br/>hola@madretierra.com</p>
+                  <p>+54 011 6272-0179<br/>madretierra.distribuidora@gmail.com</p>
                 </div>
               </div>
 
