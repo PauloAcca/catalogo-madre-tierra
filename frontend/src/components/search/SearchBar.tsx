@@ -17,7 +17,7 @@ export default function SearchBar({ value, onChange }: SearchBarProps) {
           id="search-input"
           type="text"
           className="search-input"
-          placeholder="Buscar productos..."
+          placeholder="Ej: Manzanas, Almendras, Vinos..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
           aria-label="Buscar productos"
