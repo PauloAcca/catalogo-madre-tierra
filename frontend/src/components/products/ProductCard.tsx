@@ -9,11 +9,12 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { items, addToCart, updateQuantity } = useCart();
+  const showPrices = process.env.NEXT_PUBLIC_SHOW_PRICES !== 'false';
 
   const cartItem = items.find(item => item.product.id === product.id);
   const quantityInCart = cartItem ? cartItem.quantity : 0;
 
-  const formattedPrice = product.precio
+  const formattedPrice = (product.precio && showPrices)
     ? new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: 'ARS',
@@ -44,13 +45,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       <div className="product-card-body">
         <h3 className="product-card-name">{product.nombre}</h3>
-        {formattedPrice ? (
-          <div className="product-card-price">
-            {formattedPrice}
-            <span className="product-card-price-label">por kg</span>
-          </div>
-        ) : (
-          <div className="product-card-no-price">Consultar precio en local</div>
+        {showPrices && (
+          formattedPrice ? (
+            <div className="product-card-price">
+              {formattedPrice}
+              <span className="product-card-price-label">por kg</span>
+            </div>
+          ) : (
+            <div className="product-card-no-price">Consultar precio en local</div>
+          )
         )}
       </div>
       <div className="product-card-footer">

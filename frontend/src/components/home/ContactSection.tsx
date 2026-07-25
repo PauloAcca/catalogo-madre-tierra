@@ -72,7 +72,7 @@ export default function ContactSection() {
           <div className="contact-right-col">
             <div className="contact-map-card">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d3287.164823902307!2d-58.520448184772185!3d-34.4987010804868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb193496c0993%3A0xc47e30d17e9bb4fa!2sJuan%20Jos%C3%A9%20D%C3%ADaz%20935%2C%20San%20Isidro%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar"
+                src="https://maps.google.com/maps?q=Juan+Jose+Diaz+935,+San+Isidro&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0, position: 'absolute', inset: 0 }}
