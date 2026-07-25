@@ -1,6 +1,8 @@
 import HeroSection from '@/components/home/HeroSection';
 import FeaturesSection from '@/components/home/FeaturesSection';
+import AboutSection from '@/components/home/AboutSection';
 import CatalogSection from '@/components/products/CatalogSection';
+import ContactSection from '@/components/home/ContactSection';
 import { getProducts, getCategories } from '@/services/api';
 import { Product, CategoryInfo } from '@/types/product';
 
@@ -26,10 +28,12 @@ export default async function HomePage() {
     <>
       <HeroSection />
       <FeaturesSection />
+      <AboutSection />
       <CatalogSection
         initialProducts={products}
         categories={categories}
       />
+      <ContactSection />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Product } from '@/types/product';
 import ProductCard from './ProductCard';
 
@@ -14,6 +15,16 @@ export default function ProductGrid({
   selectedCategory,
   onClearFilters,
 }: ProductGridProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
+
+  const totalPages = Math.ceil(products.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const currentProducts = products.slice(startIndex, startIndex + productsPerPage);
   if (products.length === 0) {
     return (
       <div className="product-grid">
@@ -45,10 +56,34 @@ export default function ProductGrid({
         {searchQuery && <> para &ldquo;<strong>{searchQuery}</strong>&rdquo;</>}
       </div>
       <div className="product-grid stagger-children">
-        {products.map((product) => (
+        {currentProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
+      
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button 
+            className="pagination-btn" 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Anterior
+          </button>
+          
+          <div className="pagination-info">
+            Página {currentPage} de {totalPages}
+          </div>
+          
+          <button 
+            className="pagination-btn" 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
     </>
   );
 }

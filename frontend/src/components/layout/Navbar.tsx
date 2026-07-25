@@ -43,7 +43,7 @@ export default function Navbar() {
             </button>
           </li>
           <li>
-            <button className="navbar-link">
+            <button className="navbar-link" onClick={() => scrollToSection('sobre-nosotros')}>
               Sobre Nosotros
             </button>
           </li>
@@ -61,12 +61,6 @@ export default function Navbar() {
             </svg>
             Consultar por WhatsApp
           </a>
-          <button className="navbar-btn-user" aria-label="Mi Cuenta">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </button>
         </div>
 
         <button
