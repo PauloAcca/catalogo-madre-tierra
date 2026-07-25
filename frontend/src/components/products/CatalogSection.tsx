@@ -49,17 +49,18 @@ export default function CatalogSection({
   return (
     <section className="catalog-section" id="catalogo">
       <div className="container">
-        <div className="catalog-header">
-          <h2>Nuestros Productos</h2>
-          <p>Frescos, naturales y seleccionados para vos</p>
-        </div>
-
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
         <CategoryFilter
           categories={categories}
           selected={selectedCategory}
           onSelect={setSelectedCategory}
         />
+
+        <div className="section-header" style={{ marginTop: 'var(--space-16)' }}>
+          <div className="section-tag">LO MEJOR DE LA TEMPORADA</div>
+          <h2>Productos Destacados</h2>
+        </div>
+
+        <SearchBar value={searchQuery} onChange={setSearchQuery} />
         <ProductGrid
           products={filteredProducts}
           searchQuery={debouncedSearch}
