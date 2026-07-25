@@ -9,14 +9,15 @@ export default function AboutSection() {
           </div>
           <p>
             Somos mucho más que una verdulería. En Madre Tierra fusionamos la calidad 
-            de los productos <strong>naturales y orgánicos</strong> con la conveniencia de un 
-            <strong> almacén convencional</strong>. 
+            de los productos <strong>naturales y orgánicos</strong> con la enorme variedad y 
+            conveniencia de un <strong>almacén convencional</strong>, para que consigas todo 
+            en un solo lugar.
           </p>
           <p>
-            Aquí puedes encontrar desde las frutas y verduras más frescas seleccionadas a mano, 
-            hasta aquellos productos de uso diario que necesitas en tu despensa. Nuestro objetivo 
-            es brindarte un espacio donde la curaduría boutique se encuentra con la cotidianidad, 
-            asegurando siempre la mejor calidad para tu familia.
+            Aquí puedes encontrar desde las frutas y verduras más frescas, alimentos 
+            saludables y naturales, hasta aquellos productos de uso diario que no pueden faltar en tu despensa. 
+            Nuestro objetivo es acercarte la frescura de la naturaleza junto con la comodidad 
+            de tu almacén de siempre, asegurando la mejor calidad para tu familia.
           </p>
         </div>
         <div className="about-image-wrapper">

@@ -23,7 +23,7 @@ export default function FeaturesSection() {
             </svg>
           </div>
           <h3>Selección Premium</h3>
-          <p>Solo lo mejor llega a nuestra boutique. Cada producto es testeado por expertos en sabor y calidad.</p>
+          <p>Solo lo mejor llega a nuestro local. Cada producto es probado por expertos en sabor y calidad.</p>
         </div>
 
         {/* Feature 3 */}
