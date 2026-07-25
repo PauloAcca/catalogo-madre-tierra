@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Product } from '@/types/product';
-import { getProducts, updateProductImage, updateGlobalShowPrices, updateProductShowPrice } from '@/services/api';
+import { getProducts, updateProductImage, updateGlobalShowPrices, updateProductShowPrice, verifyAdminPassword } from '@/services/api';
 import { uploadToCloudinary } from '@/services/cloudinary';
 import Navbar from '@/components/layout/Navbar';
 
@@ -36,8 +36,10 @@ export default function AdminPage() {
     setError('');
     
     try {
-      // Fetch products to verify we can access the page (even though products is public, 
-      // we just want to load them once logged in)
+      // Verificar la contraseña con el backend primero
+      await verifyAdminPassword(currentPass);
+
+      // Si es correcta, cargamos los productos y permitimos el ingreso
       const data = await getProducts();
       setProducts(data.data);
       if (data.meta && data.meta.globalShowPrices !== undefined) {
@@ -45,8 +47,9 @@ export default function AdminPage() {
       }
       setIsLoggedIn(true);
       sessionStorage.setItem('adminPassword', currentPass);
-    } catch (err) {
-      setError('Error al cargar productos');
+    } catch (err: any) {
+      setError('Contraseña incorrecta. Inténtalo de nuevo.');
+      sessionStorage.removeItem('adminPassword');
     } finally {
       setLoading(false);
     }

@@ -26,6 +26,12 @@ export class ConfigController {
     return this.configService.updateProductOverride(productId, showPrice);
   }
 
+  @Post('verify')
+  verifyPassword(@Headers('authorization') auth: string) {
+    this.verifyAuth(auth);
+    return { success: true };
+  }
+
   private verifyAuth(auth: string) {
     if (!auth || !auth.startsWith('Bearer ')) {
       throw new UnauthorizedException('Falta token de autorización');

@@ -73,6 +73,21 @@ export async function updateProductShowPrice(productId: string, showPrice: boole
   return res.json();
 }
 
+export async function verifyAdminPassword(adminPassword: string): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/api/config/verify`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${adminPassword}`
+    }
+  });
+  
+  if (!res.ok) {
+    throw new Error('Contraseña incorrecta');
+  }
+  
+  return true;
+}
+
 export async function getProducts(
   search?: string,
   category?: string,

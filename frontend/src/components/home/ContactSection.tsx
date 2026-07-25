@@ -31,9 +31,10 @@ export default function ContactSection() {
                 </div>
                 <div className="contact-item-content">
                   <h4>HORARIOS DE ATENCIÓN</h4>
-                  <div className="schedule-row"><span>Lun - Vie:</span> <span>08:00 — 19:00</span></div>
-                  <div className="schedule-row"><span>Sábados:</span> <span>09:00 — 14:00</span></div>
-                  <div className="schedule-row closed"><span>Domingos:</span> <span>Cerrado</span></div>
+                  <div className="schedule-row"><span>Lunes:</span> <span>07:00 — 20:00</span></div>
+                  <div className="schedule-row"><span>Mar - Vie:</span> <span>07:30 — 20:00</span></div>
+                  <div className="schedule-row"><span>Sábados:</span> <span>08:30 — 20:00</span></div>
+                  <div className="schedule-row"><span>Domingos:</span> <span>09:30 — 13:30</span></div>
                 </div>
               </div>
 
