@@ -31,8 +31,7 @@ export default function ContactSection() {
                 </div>
                 <div className="contact-item-content">
                   <h4>HORARIOS DE ATENCIÓN</h4>
-                  <div className="schedule-row"><span>Lunes:</span> <span>07:00 — 20:00</span></div>
-                  <div className="schedule-row"><span>Mar - Vie:</span> <span>07:30 — 20:00</span></div>
+                  <div className="schedule-row"><span>Lun - Vie:</span> <span>07:30 — 20:00</span></div>
                   <div className="schedule-row"><span>Sábados:</span> <span>08:30 — 20:00</span></div>
                   <div className="schedule-row"><span>Domingos:</span> <span>09:30 — 13:30</span></div>
                 </div>
@@ -73,7 +72,7 @@ export default function ContactSection() {
           <div className="contact-right-col">
             <div className="contact-map-card">
               <iframe
-                src="https://maps.google.com/maps?q=Juan+Jose+Diaz+935,+San+Isidro&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                src="https://maps.google.com/maps?q=Madre+tierra,+San+Isidro&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0, position: 'absolute', inset: 0 }}
@@ -81,7 +80,7 @@ export default function ContactSection() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
-              <a href="https://maps.google.com/?q=Juan+Jose+Diaz+935+San+Isidro" target="_blank" rel="noopener noreferrer" className="map-overlay-btn">
+              <a href="https://maps.app.goo.gl/z5pWs5hVr3XEY9BN7" target="_blank" rel="noopener noreferrer" className="map-overlay-btn">
                 <div className="map-btn-icon">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
