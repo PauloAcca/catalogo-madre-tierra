@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import BackToTop from '@/components/ui/BackToTop';
+import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp';
 import { CartProvider } from '@/context/CartContext';
 import CartSidebar from '@/components/layout/CartSidebar';
 
@@ -49,6 +50,7 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
           <CartSidebar />
+          <FloatingWhatsApp />
           <BackToTop />
         </CartProvider>
       </body>
