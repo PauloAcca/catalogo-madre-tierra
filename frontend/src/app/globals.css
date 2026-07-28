@@ -654,6 +654,22 @@ input, textarea, select {
   z-index: 10;
 }
 
+@media (max-width: 640px) {
+  .search-container {
+    padding: 0 var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+  .search-input {
+    padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-10) + var(--space-2)) !important;
+    font-size: var(--text-base) !important;
+  }
+  .search-input-wrapper svg {
+    left: var(--space-4) !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
 .search-input-wrapper {
   position: relative;
   display: flex;
@@ -825,6 +841,21 @@ input, textarea, select {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
+  }
+  .product-card-image {
+    aspect-ratio: 1 !important;
+  }
+  .product-card-body {
+    padding: var(--space-3) !important;
+  }
+  .product-card-name {
+    font-size: var(--text-sm) !important;
+  }
+  .catalog-section {
+    padding-bottom: var(--space-6);
+  }
+  .about-section {
+    padding-top: var(--space-6);
   }
 }
 
@@ -1319,8 +1350,8 @@ input, textarea, select {
 
 .floating-whatsapp {
   position: fixed;
-  bottom: var(--space-8);
-  left: var(--space-8);
+  bottom: calc(var(--space-8) * 2 + 44px);
+  right: var(--space-8);
   width: 52px;
   height: 52px;
   background-color: #25D366;
@@ -1341,8 +1372,8 @@ input, textarea, select {
 
 @media (max-width: 768px) {
   .floating-whatsapp {
-    bottom: var(--space-4);
-    left: var(--space-4);
+    bottom: calc(var(--space-4) * 2 + 44px);
+    right: var(--space-4);
     width: 44px;
     height: 44px;
   }
