@@ -162,7 +162,7 @@ export default function AdminPage() {
     <>
       <Navbar />
       <main className="container" style={{ paddingTop: '120px', minHeight: '100vh', paddingBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="admin-header">
           <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', margin: 0 }}>Panel de Administración</h1>
           <button 
             onClick={() => {
@@ -177,15 +177,15 @@ export default function AdminPage() {
 
         {error && <p style={{ color: 'red', marginBottom: '1rem', padding: '1rem', background: '#ffeeee', borderRadius: '0.5rem' }}>{error}</p>}
 
-        <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div className="admin-controls">
           <input
             type="text"
             placeholder="Buscar producto por nombre o categoría..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ flex: 1, padding: '1rem', border: '1px solid #c5ceae', borderRadius: '0.5rem', fontSize: '1rem', outline: 'none' }}
+            className="admin-search-input"
           />
-          <div style={{ background: 'white', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #c5ceae', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="admin-global-toggle-box">
             <span style={{ fontWeight: 600, color: '#5C6B3C' }}>Precios Globales:</span>
             <button 
               onClick={handleGlobalToggle}
@@ -205,8 +205,8 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: 'white', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
             <thead>
               <tr style={{ background: '#5C6B3C', color: 'white', textAlign: 'left' }}>
                 <th style={{ padding: '1rem' }}>Producto</th>
@@ -219,7 +219,7 @@ export default function AdminPage() {
             <tbody>
               {filteredProducts.map((product) => (
                 <tr key={product.id} style={{ borderBottom: '1px solid #e1e6d5' }}>
-                  <td style={{ padding: '1rem' }}>{product.nombre}</td>
+                  <td style={{ padding: '1rem', fontWeight: 500 }}>{product.nombre}</td>
                   <td style={{ padding: '1rem' }}>{product.categoria}</td>
                   <td style={{ padding: '1rem' }}>
                     <button
