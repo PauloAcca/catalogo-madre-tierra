@@ -221,14 +221,15 @@ export default function AdminPage() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', width: '100%', flexWrap: 'wrap' }}>
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="admin-search-input"
-            />
+          <input
+            type="text"
+            placeholder="Buscar producto..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="admin-search-input"
+          />
+
+          <div className="admin-selects-row">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -241,6 +242,7 @@ export default function AdminPage() {
                 </option>
               ))}
             </select>
+
             <select
               value={imageFilter}
               onChange={(e) => setImageFilter(e.target.value as any)}

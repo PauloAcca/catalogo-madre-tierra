@@ -5,12 +5,13 @@ import * as path from 'path';
 export interface AppConfig {
   globalShowPrices: boolean;
   productOverrides: Record<string, boolean>;
+  imageOverrides: Record<string, string>;
 }
 
 @Injectable()
 export class ConfigService implements OnModuleInit {
   private readonly logger = new Logger(ConfigService.name);
-  private config: AppConfig = { globalShowPrices: false, productOverrides: {} };
+  private config: AppConfig = { globalShowPrices: false, productOverrides: {}, imageOverrides: {} };
   private readonly configPath = path.join(process.cwd(), 'data', 'config.json');
 
   onModuleInit() {
@@ -30,6 +31,7 @@ export class ConfigService implements OnModuleInit {
         this.config = {
           globalShowPrices: parsed.globalShowPrices ?? false,
           productOverrides: parsed.productOverrides ?? {},
+          imageOverrides: parsed.imageOverrides ?? {},
         };
       } else {
         this.saveConfig();
@@ -63,6 +65,15 @@ export class ConfigService implements OnModuleInit {
     } else {
       this.config.productOverrides[productId] = show;
     }
+    this.saveConfig();
+    return this.config;
+  }
+
+  updateImageOverride(productId: string, imageUrl: string) {
+    if (!this.config.imageOverrides) {
+      this.config.imageOverrides = {};
+    }
+    this.config.imageOverrides[productId] = imageUrl;
     this.saveConfig();
     return this.config;
   }

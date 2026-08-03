@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, NotFoundException } from '@nestjs/common';
 import { google, sheets_v4 } from 'googleapis';
 import { Product } from '../products/interfaces/product.interface';
 
@@ -172,43 +172,33 @@ export class SheetsService implements OnModuleInit {
   async updateProductImage(productId: string, imageUrl: string): Promise<Product> {
     const product = this.cachedProducts.find((p) => p.id === productId);
     if (!product) {
-      throw new Error(`Product with ID ${productId} not found`);
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
     }
+
+    product.imagenUrl = imageUrl;
 
     const meta = product._meta;
-    if (!meta || !meta.imgColLetter) {
-      throw new Error(
-        `No se puede actualizar la imagen para ${productId}: La columna "imgURL" no existe en la pestaña "${meta?.sheetName || 'desconocida'}". Por favor creala en el Excel primero.`,
-      );
-    }
-
     const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
-    if (!this.sheets || !spreadsheetId) {
-      // In mock mode, just update cache
-      this.logger.warn(`Mock mode: updated image for ${productId} to ${imageUrl}`);
-      product.imagenUrl = imageUrl;
-      return product;
+
+    if (meta && meta.imgColLetter && this.sheets && spreadsheetId) {
+      const range = `'${meta.sheetName}'!${meta.imgColLetter}${meta.rowNumber}`;
+      try {
+        await this.sheets.spreadsheets.values.update({
+          spreadsheetId,
+          range,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [[imageUrl]],
+          },
+        });
+      } catch (error) {
+        this.logger.warn(`No se pudo actualizar en Google Sheets (${range}), pero se guardó localmente.`, error?.message || error);
+      }
+    } else {
+      this.logger.warn(`Sheet metadata or imgURL column missing for product ${productId}, saved in local config override.`);
     }
 
-    const range = `'${meta.sheetName}'!${meta.imgColLetter}${meta.rowNumber}`;
-    
-    try {
-      await this.sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range,
-        valueInputOption: 'USER_ENTERED',
-        requestBody: {
-          values: [[imageUrl]],
-        },
-      });
-
-      // Update cache
-      product.imagenUrl = imageUrl;
-      return product;
-    } catch (error) {
-      this.logger.error(`Failed to update image for ${productId} at ${range}`, error);
-      throw new Error('Error al escribir en Google Sheets');
-    }
+    return product;
   }
 
   private colIndexToLetter(index: number): string {

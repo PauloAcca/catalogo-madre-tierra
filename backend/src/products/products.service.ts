@@ -39,11 +39,13 @@ export class ProductsService {
     }
 
     const config = this.configService.getConfig();
+    const imageOverrides = config.imageOverrides || {};
 
     return products.map(p => {
       const override = config.productOverrides[p.id];
       const showPrice = override !== undefined ? override : config.globalShowPrices;
-      return { ...p, showPrice };
+      const imagenUrl = imageOverrides[p.id] || p.imagenUrl || null;
+      return { ...p, showPrice, imagenUrl };
     });
   }
 
@@ -59,8 +61,10 @@ export class ProductsService {
     const config = this.configService.getConfig();
     const override = config.productOverrides[product.id];
     const showPrice = override !== undefined ? override : config.globalShowPrices;
+    const imageOverrides = config.imageOverrides || {};
+    const imagenUrl = imageOverrides[product.id] || product.imagenUrl || null;
 
-    return { ...product, showPrice };
+    return { ...product, showPrice, imagenUrl };
   }
 
   getCategories(): CategoryInfo[] {
@@ -89,6 +93,11 @@ export class ProductsService {
   }
 
   async updateProductImage(id: string, imageUrl: string): Promise<Product> {
-    return this.sheetsService.updateProductImage(id, imageUrl);
+    this.configService.updateImageOverride(id, imageUrl);
+    const updatedProduct = await this.sheetsService.updateProductImage(id, imageUrl);
+    const config = this.configService.getConfig();
+    const override = config.productOverrides[updatedProduct.id];
+    const showPrice = override !== undefined ? override : config.globalShowPrices;
+    return { ...updatedProduct, showPrice, imagenUrl: imageUrl };
   }
 }

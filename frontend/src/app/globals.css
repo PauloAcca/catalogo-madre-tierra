@@ -2064,7 +2064,20 @@ input, textarea, select {
   color: var(--color-text);
   outline: none;
   cursor: pointer;
-  min-width: 150px;
+  min-width: 130px;
+}
+
+.admin-selects-row {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.admin-selects-row .admin-select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.8rem 0.5rem;
+  font-size: 14px;
 }
 
 .admin-global-toggle-box {
