@@ -128,8 +128,8 @@ export default function AdminPage() {
     return (
       <>
         <Navbar />
-        <main className="container" style={{ paddingTop: '150px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h1 style={{ marginBottom: '2rem' }}>Acceso Administración</h1>
+        <main className="container" style={{ paddingTop: '120px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '1rem', paddingRight: '1rem' }}>
+          <h1 style={{ marginBottom: '1.5rem', fontSize: 'clamp(1.5rem, 6vw, 2.5rem)', textAlign: 'center', wordBreak: 'break-word' }}>Acceso Administración</h1>
           <div style={{ background: '#FAF8F5', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', width: '100%', maxWidth: '400px' }}>
             {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
             <input
@@ -137,12 +137,12 @@ export default function AdminPage() {
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ width: '100%', padding: '0.8rem', marginBottom: '1rem', border: '1px solid #c5ceae', borderRadius: '0.5rem' }}
+              style={{ width: '100%', padding: '0.8rem', marginBottom: '1rem', border: '1px solid #c5ceae', borderRadius: '0.5rem', fontSize: '16px' }}
             />
             <button 
               onClick={() => handleLogin()}
               disabled={loading}
-              style={{ width: '100%', padding: '0.8rem', background: '#5C6B3C', color: 'white', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}
+              style={{ width: '100%', padding: '0.8rem', background: '#5C6B3C', color: 'white', border: 'none', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '16px' }}
             >
               {loading ? 'Cargando...' : 'Ingresar'}
             </button>
@@ -162,14 +162,14 @@ export default function AdminPage() {
     <>
       <Navbar />
       <main className="container" style={{ paddingTop: '120px', minHeight: '100vh', paddingBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h1>Panel de Administración</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', margin: 0 }}>Panel de Administración</h1>
           <button 
             onClick={() => {
               sessionStorage.removeItem('adminPassword');
               setIsLoggedIn(false);
             }}
-            style={{ padding: '0.5rem 1rem', background: '#e1e6d5', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}
+            style={{ padding: '0.5rem 1rem', background: '#e1e6d5', border: 'none', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '14px' }}
           >
             Cerrar Sesión
           </button>
