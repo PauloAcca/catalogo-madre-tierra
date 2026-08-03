@@ -170,12 +170,18 @@ export class SheetsService implements OnModuleInit {
   }
 
   async updateProductImage(productId: string, imageUrl: string): Promise<Product> {
-    const product = this.cachedProducts.find((p) => p.id === productId);
-    if (!product) {
-      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
-    }
+    const existing = this.cachedProducts.find((p) => p.id === productId);
+    const product: Product = existing
+      ? existing
+      : {
+          id: productId,
+          nombre: 'Producto',
+          categoria: 'General',
+          precio: 0,
+          imagenUrl: imageUrl || null,
+        };
 
-    product.imagenUrl = imageUrl;
+    product.imagenUrl = imageUrl || null;
 
     const meta = product._meta;
     const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
@@ -191,7 +197,7 @@ export class SheetsService implements OnModuleInit {
             values: [[imageUrl]],
           },
         });
-      } catch (error) {
+      } catch (error: any) {
         this.logger.warn(`No se pudo actualizar en Google Sheets (${range}), pero se guardó localmente.`, error?.message || error);
       }
     } else {

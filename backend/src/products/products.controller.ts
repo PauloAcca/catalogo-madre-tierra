@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Body, Patch, Headers, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Patch, Headers, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ConfigService } from '../config/config.service';
 
@@ -51,7 +51,7 @@ export class ProductsController {
   @Patch('products/:id/image')
   async updateImage(
     @Param('id') id: string,
-    @Body('imageUrl') imageUrl: string,
+    @Body() body: any,
     @Headers('authorization') authHeader: string,
   ) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -65,8 +65,14 @@ export class ProductsController {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
-    const targetUrl = imageUrl ? imageUrl.trim() : '';
-    const product = await this.productsService.updateProductImage(id, targetUrl);
-    return { data: product, message: targetUrl ? 'Imagen actualizada exitosamente' : 'Imagen eliminada exitosamente' };
+    const rawUrl = body?.imageUrl;
+    const targetUrl = typeof rawUrl === 'string' ? rawUrl.trim() : '';
+
+    try {
+      const product = await this.productsService.updateProductImage(id, targetUrl);
+      return { data: product, message: targetUrl ? 'Imagen actualizada exitosamente' : 'Imagen eliminada exitosamente' };
+    } catch (err: any) {
+      throw new HttpException(err?.message || 'Error al actualizar imagen', HttpStatus.BAD_REQUEST);
+    }
   }
 }
