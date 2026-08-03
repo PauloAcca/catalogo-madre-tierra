@@ -12,6 +12,8 @@ export default function AdminPage() {
   
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [imageFilter, setImageFilter] = useState<'all' | 'with_image' | 'without_image'>('all');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [globalShowPrices, setGlobalShowPrices] = useState(true);
@@ -152,11 +154,22 @@ export default function AdminPage() {
     );
   }
 
-  const filteredProducts = products.filter(
-    (p) =>
+  const categories = Array.from(new Set(products.map((p) => p.categoria))).filter(Boolean).sort();
+
+  const filteredProducts = products.filter((p) => {
+    const matchesSearch =
       p.nombre.toLowerCase().includes(search.toLowerCase()) ||
-      p.categoria.toLowerCase().includes(search.toLowerCase())
-  );
+      p.categoria.toLowerCase().includes(search.toLowerCase());
+
+    const matchesCategory = selectedCategory === 'all' || p.categoria === selectedCategory;
+
+    const matchesImage =
+      imageFilter === 'all' ||
+      (imageFilter === 'with_image' && Boolean(p.imagenUrl)) ||
+      (imageFilter === 'without_image' && !p.imagenUrl);
+
+    return matchesSearch && matchesCategory && matchesImage;
+  });
 
   return (
     <>
@@ -169,7 +182,18 @@ export default function AdminPage() {
               sessionStorage.removeItem('adminPassword');
               setIsLoggedIn(false);
             }}
-            style={{ padding: '0.5rem 1rem', background: '#e1e6d5', border: 'none', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '14px' }}
+            style={{ 
+              padding: '0.6rem 1.2rem', 
+              background: '#dc2626', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '0.5rem', 
+              cursor: 'pointer', 
+              fontSize: '14px',
+              fontWeight: 600,
+              boxShadow: '0 2px 6px rgba(220, 38, 38, 0.25)',
+              transition: 'background 0.2s'
+            }}
           >
             Cerrar Sesión
           </button>
@@ -178,13 +202,6 @@ export default function AdminPage() {
         {error && <p style={{ color: 'red', marginBottom: '1rem', padding: '1rem', background: '#ffeeee', borderRadius: '0.5rem' }}>{error}</p>}
 
         <div className="admin-controls">
-          <input
-            type="text"
-            placeholder="Buscar producto por nombre o categoría..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="admin-search-input"
-          />
           <div className="admin-global-toggle-box">
             <span style={{ fontWeight: 600, color: '#5C6B3C' }}>Precios Globales:</span>
             <button 
@@ -203,6 +220,37 @@ export default function AdminPage() {
               {globalShowPrices ? 'VISIBLES' : 'OCULTOS'}
             </button>
           </div>
+
+          <div style={{ display: 'flex', gap: '1rem', width: '100%', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              placeholder="Buscar producto..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="admin-search-input"
+            />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="admin-select"
+            >
+              <option value="all">Todas las categorías ({products.length})</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+            <select
+              value={imageFilter}
+              onChange={(e) => setImageFilter(e.target.value as any)}
+              className="admin-select"
+            >
+              <option value="all">Fotos: Todas</option>
+              <option value="with_image">Con foto</option>
+              <option value="without_image">Sin foto</option>
+            </select>
+          </div>
         </div>
 
         <div className="admin-table-wrapper">
@@ -210,34 +258,16 @@ export default function AdminPage() {
             <thead>
               <tr style={{ background: '#5C6B3C', color: 'white', textAlign: 'left' }}>
                 <th style={{ padding: '1rem' }}>Producto</th>
+                <th style={{ padding: '1rem' }}>Imagen Actual</th>
+                <th style={{ padding: '1rem' }}>Subir Imagen</th>
                 <th style={{ padding: '1rem' }}>Categoría</th>
                 <th style={{ padding: '1rem' }}>Mostrar Precio</th>
-                <th style={{ padding: '1rem' }}>Imagen Actual</th>
-                <th style={{ padding: '1rem' }}>Acción</th>
               </tr>
             </thead>
             <tbody>
               {filteredProducts.map((product) => (
                 <tr key={product.id} style={{ borderBottom: '1px solid #e1e6d5' }}>
                   <td style={{ padding: '1rem', fontWeight: 500 }}>{product.nombre}</td>
-                  <td style={{ padding: '1rem' }}>{product.categoria}</td>
-                  <td style={{ padding: '1rem' }}>
-                    <button
-                      onClick={() => handleProductToggle(product)}
-                      disabled={togglingId === product.id}
-                      style={{
-                        background: product.showPrice ? '#5C6B3C' : '#e1e6d5',
-                        color: product.showPrice ? 'white' : '#5C6B3C',
-                        border: 'none',
-                        padding: '0.4rem 0.8rem',
-                        borderRadius: '0.5rem',
-                        cursor: togglingId === product.id ? 'not-allowed' : 'pointer',
-                        fontSize: '0.9rem'
-                      }}
-                    >
-                      {togglingId === product.id ? '...' : (product.showPrice ? 'Sí' : 'No')}
-                    </button>
-                  </td>
                   <td style={{ padding: '1rem' }}>
                     {product.imagenUrl ? (
                       <img src={product.imagenUrl} alt={product.nombre} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '0.5rem' }} />
@@ -261,6 +291,24 @@ export default function AdminPage() {
                         style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
                       />
                     </div>
+                  </td>
+                  <td style={{ padding: '1rem' }}>{product.categoria}</td>
+                  <td style={{ padding: '1rem' }}>
+                    <button
+                      onClick={() => handleProductToggle(product)}
+                      disabled={togglingId === product.id}
+                      style={{
+                        background: product.showPrice ? '#5C6B3C' : '#e1e6d5',
+                        color: product.showPrice ? 'white' : '#5C6B3C',
+                        border: 'none',
+                        padding: '0.4rem 0.8rem',
+                        borderRadius: '0.5rem',
+                        cursor: togglingId === product.id ? 'not-allowed' : 'pointer',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {togglingId === product.id ? '...' : (product.showPrice ? 'Sí' : 'No')}
+                    </button>
                   </td>
                 </tr>
               ))}

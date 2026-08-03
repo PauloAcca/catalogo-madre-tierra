@@ -2052,7 +2052,19 @@ input, textarea, select {
   font-size: 16px;
   outline: none;
   background: white;
-  min-width: 0;
+  min-width: 180px;
+}
+
+.admin-select {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  background: white;
+  color: var(--color-text);
+  outline: none;
+  cursor: pointer;
+  min-width: 150px;
 }
 
 .admin-global-toggle-box {
