@@ -98,6 +98,6 @@ export class ProductsService {
     const config = this.configService.getConfig();
     const override = config.productOverrides[updatedProduct.id];
     const showPrice = override !== undefined ? override : config.globalShowPrices;
-    return { ...updatedProduct, showPrice, imagenUrl: imageUrl };
+    return { ...updatedProduct, showPrice, imagenUrl: imageUrl || null };
   }
 }

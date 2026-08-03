@@ -88,6 +88,28 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteImage = async (productId: string) => {
+    if (!confirm('¿Estás seguro de eliminar la foto de este producto?')) return;
+
+    setUploadingId(productId);
+    setError('');
+
+    try {
+      await updateProductImage(productId, '', password);
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? { ...p, imagenUrl: null } : p)),
+      );
+    } catch (err: any) {
+      setError(err.message || 'Error al eliminar la imagen');
+      if (err.message?.includes('Contraseña incorrecta')) {
+        setIsLoggedIn(false);
+        sessionStorage.removeItem('adminPassword');
+      }
+    } finally {
+      setUploadingId(null);
+    }
+  };
+
   const handleGlobalToggle = async () => {
     try {
       const newValue = !globalShowPrices;
@@ -278,20 +300,49 @@ export default function AdminPage() {
                     )}
                   </td>
                   <td style={{ padding: '1rem' }}>
-                    <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
-                      <button 
-                        disabled={uploadingId === product.id}
-                        style={{ padding: '0.5rem 1rem', background: '#D4C5A9', border: 'none', borderRadius: '0.5rem', cursor: uploadingId === product.id ? 'not-allowed' : 'pointer' }}
-                      >
-                        {uploadingId === product.id ? 'Subiendo...' : 'Subir Foto'}
-                      </button>
-                      <input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(product.id, e)}
-                        disabled={uploadingId === product.id}
-                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
-                      />
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+                        <button 
+                          disabled={uploadingId === product.id}
+                          style={{ 
+                            padding: '0.4rem 0.8rem', 
+                            background: '#D4C5A9', 
+                            border: 'none', 
+                            borderRadius: '0.5rem', 
+                            cursor: uploadingId === product.id ? 'not-allowed' : 'pointer',
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          {uploadingId === product.id ? '...' : (product.imagenUrl ? 'Cambiar' : 'Subir')}
+                        </button>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={(e) => handleFileUpload(product.id, e)}
+                          disabled={uploadingId === product.id}
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                        />
+                      </div>
+
+                      {product.imagenUrl && (
+                        <button
+                          onClick={() => handleDeleteImage(product.id)}
+                          disabled={uploadingId === product.id}
+                          title="Eliminar foto"
+                          style={{
+                            padding: '0.4rem 0.8rem',
+                            background: '#fee2e2',
+                            color: '#dc2626',
+                            border: '1px solid #fca5a5',
+                            borderRadius: '0.5rem',
+                            cursor: uploadingId === product.id ? 'not-allowed' : 'pointer',
+                            fontSize: '0.85rem',
+                            fontWeight: 600
+                          }}
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </div>
                   </td>
                   <td style={{ padding: '1rem' }}>{product.categoria}</td>

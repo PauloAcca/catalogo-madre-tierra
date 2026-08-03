@@ -65,11 +65,8 @@ export class ProductsController {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
-    if (!imageUrl) {
-      throw new Error('imageUrl es requerido');
-    }
-
-    const product = await this.productsService.updateProductImage(id, imageUrl);
-    return { data: product, message: 'Imagen actualizada exitosamente' };
+    const targetUrl = imageUrl ? imageUrl.trim() : '';
+    const product = await this.productsService.updateProductImage(id, targetUrl);
+    return { data: product, message: targetUrl ? 'Imagen actualizada exitosamente' : 'Imagen eliminada exitosamente' };
   }
 }

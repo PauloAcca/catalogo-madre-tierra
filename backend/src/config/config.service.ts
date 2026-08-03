@@ -69,11 +69,15 @@ export class ConfigService implements OnModuleInit {
     return this.config;
   }
 
-  updateImageOverride(productId: string, imageUrl: string) {
+  updateImageOverride(productId: string, imageUrl: string | null) {
     if (!this.config.imageOverrides) {
       this.config.imageOverrides = {};
     }
-    this.config.imageOverrides[productId] = imageUrl;
+    if (!imageUrl) {
+      delete this.config.imageOverrides[productId];
+    } else {
+      this.config.imageOverrides[productId] = imageUrl;
+    }
     this.saveConfig();
     return this.config;
   }
