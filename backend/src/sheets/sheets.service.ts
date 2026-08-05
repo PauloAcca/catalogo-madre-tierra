@@ -28,7 +28,7 @@ export class SheetsService implements OnModuleInit {
       const credentials = JSON.parse(credentialsJson);
       const auth = new google.auth.GoogleAuth({
         credentials,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });
 
       this.sheets = google.sheets({ version: 'v4', auth });
