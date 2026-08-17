@@ -6,12 +6,14 @@ export interface AppConfig {
   globalShowPrices: boolean;
   productOverrides: Record<string, boolean>;
   imageOverrides: Record<string, string>;
+  hiddenProducts: Record<string, boolean>;
+  deletedProducts: Record<string, boolean>;
 }
 
 @Injectable()
 export class ConfigService implements OnModuleInit {
   private readonly logger = new Logger(ConfigService.name);
-  private config: AppConfig = { globalShowPrices: false, productOverrides: {}, imageOverrides: {} };
+  private config: AppConfig = { globalShowPrices: false, productOverrides: {}, imageOverrides: {}, hiddenProducts: {}, deletedProducts: {} };
   private readonly configPath = path.join(process.cwd(), 'data', 'config.json');
 
   onModuleInit() {
@@ -32,6 +34,8 @@ export class ConfigService implements OnModuleInit {
           globalShowPrices: parsed.globalShowPrices ?? false,
           productOverrides: parsed.productOverrides ?? {},
           imageOverrides: parsed.imageOverrides ?? {},
+          hiddenProducts: parsed.hiddenProducts ?? {},
+          deletedProducts: parsed.deletedProducts ?? {},
         };
       } else {
         this.saveConfig();
@@ -78,6 +82,28 @@ export class ConfigService implements OnModuleInit {
     } else {
       this.config.imageOverrides[productId] = imageUrl;
     }
+    this.saveConfig();
+    return this.config;
+  }
+
+  updateProductVisibility(productId: string, visible: boolean) {
+    if (!this.config.hiddenProducts) {
+      this.config.hiddenProducts = {};
+    }
+    if (visible) {
+      delete this.config.hiddenProducts[productId];
+    } else {
+      this.config.hiddenProducts[productId] = true;
+    }
+    this.saveConfig();
+    return this.config;
+  }
+
+  markProductDeleted(productId: string) {
+    if (!this.config.deletedProducts) {
+      this.config.deletedProducts = {};
+    }
+    this.config.deletedProducts[productId] = true;
     this.saveConfig();
     return this.config;
   }

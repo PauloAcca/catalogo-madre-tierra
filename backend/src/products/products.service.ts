@@ -20,8 +20,25 @@ export class ProductsService {
     this.logger.log('Products data refreshed');
   }
 
-  findAll(search?: string, category?: string): Product[] {
-    let products = this.sheetsService.getProducts();
+  findAll(search?: string, category?: string, includeHidden: boolean = false): Product[] {
+    const config = this.configService.getConfig();
+    const imageOverrides = config.imageOverrides || {};
+    const hiddenProducts = config.hiddenProducts || {};
+    const deletedProducts = config.deletedProducts || {};
+
+    const rawProducts = this.sheetsService.getProducts().filter(p => !deletedProducts[p.id]);
+
+    let products = rawProducts.map(p => {
+      const override = config.productOverrides[p.id];
+      const showPrice = override !== undefined ? override : config.globalShowPrices;
+      const imagenUrl = imageOverrides[p.id] || p.imagenUrl || null;
+      const isVisible = !hiddenProducts[p.id];
+      return { ...p, showPrice, imagenUrl, isVisible };
+    });
+
+    if (!includeHidden) {
+      products = products.filter((p) => p.isVisible);
+    }
 
     if (category) {
       products = products.filter(
@@ -38,18 +55,15 @@ export class ProductsService {
       );
     }
 
-    const config = this.configService.getConfig();
-    const imageOverrides = config.imageOverrides || {};
-
-    return products.map(p => {
-      const override = config.productOverrides[p.id];
-      const showPrice = override !== undefined ? override : config.globalShowPrices;
-      const imagenUrl = imageOverrides[p.id] || p.imagenUrl || null;
-      return { ...p, showPrice, imagenUrl };
-    });
+    return products;
   }
 
-  findOne(id: string): Product {
+  findOne(id: string, includeHidden: boolean = false): Product {
+    const config = this.configService.getConfig();
+    if (config.deletedProducts?.[id]) {
+      throw new NotFoundException(`Producto con id "${id}" no encontrado`);
+    }
+
     const product = this.sheetsService
       .getProducts()
       .find((p) => p.id === id);
@@ -58,17 +72,22 @@ export class ProductsService {
       throw new NotFoundException(`Producto con id "${id}" no encontrado`);
     }
 
-    const config = this.configService.getConfig();
     const override = config.productOverrides[product.id];
     const showPrice = override !== undefined ? override : config.globalShowPrices;
     const imageOverrides = config.imageOverrides || {};
     const imagenUrl = imageOverrides[product.id] || product.imagenUrl || null;
+    const hiddenProducts = config.hiddenProducts || {};
+    const isVisible = !hiddenProducts[product.id];
 
-    return { ...product, showPrice, imagenUrl };
+    if (!includeHidden && !isVisible) {
+      throw new NotFoundException(`Producto con id "${id}" no encontrado`);
+    }
+
+    return { ...product, showPrice, imagenUrl, isVisible };
   }
 
-  getCategories(): CategoryInfo[] {
-    const products = this.sheetsService.getProducts();
+  getCategories(includeHidden: boolean = false): CategoryInfo[] {
+    const products = this.findAll(undefined, undefined, includeHidden);
     const categoryMap = new Map<string, number>();
 
     for (const product of products) {
@@ -84,7 +103,7 @@ export class ProductsService {
 
   getStats() {
     const products = this.sheetsService.getProducts();
-    const categories = this.getCategories();
+    const categories = this.getCategories(true);
     return {
       totalProducts: products.length,
       totalCategories: categories.length,
@@ -98,6 +117,13 @@ export class ProductsService {
     const config = this.configService.getConfig();
     const override = config.productOverrides[updatedProduct.id];
     const showPrice = override !== undefined ? override : config.globalShowPrices;
-    return { ...updatedProduct, showPrice, imagenUrl: imageUrl || null };
+    const hiddenProducts = config.hiddenProducts || {};
+    const isVisible = !hiddenProducts[updatedProduct.id];
+    return { ...updatedProduct, showPrice, imagenUrl: imageUrl || null, isVisible };
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    this.configService.markProductDeleted(id);
+    return this.sheetsService.deleteProduct(id);
   }
 }

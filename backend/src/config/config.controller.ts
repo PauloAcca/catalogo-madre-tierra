@@ -26,6 +26,16 @@ export class ConfigController {
     return this.configService.updateProductOverride(productId, showPrice);
   }
 
+  @Post('product-visibility')
+  updateProductVisibility(
+    @Body('productId') productId: string,
+    @Body('visible') visible: boolean,
+    @Headers('authorization') auth: string
+  ) {
+    this.verifyAuth(auth);
+    return this.configService.updateProductVisibility(productId, visible);
+  }
+
   @Post('verify')
   verifyPassword(@Headers('authorization') auth: string) {
     this.verifyAuth(auth);

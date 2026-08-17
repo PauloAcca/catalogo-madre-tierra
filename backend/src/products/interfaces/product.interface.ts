@@ -5,6 +5,7 @@ export interface Product {
   precio: number | null;
   imagenUrl: string | null;
   showPrice?: boolean;
+  isVisible?: boolean;
   _meta?: {
     sheetName: string;
     rowNumber: number;

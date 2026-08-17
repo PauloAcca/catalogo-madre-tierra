@@ -207,6 +207,32 @@ export class SheetsService implements OnModuleInit {
     return product;
   }
 
+  async deleteProduct(productId: string): Promise<boolean> {
+    const existingIndex = this.cachedProducts.findIndex((p) => p.id === productId);
+    if (existingIndex === -1) return false;
+
+    const product = this.cachedProducts[existingIndex];
+    this.cachedProducts.splice(existingIndex, 1);
+
+    const meta = product._meta;
+    const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+
+    if (meta && meta.sheetName && meta.rowNumber && this.sheets && spreadsheetId) {
+      const range = `'${meta.sheetName}'!A${meta.rowNumber}:Z${meta.rowNumber}`;
+      try {
+        await this.sheets.spreadsheets.values.clear({
+          spreadsheetId,
+          range,
+        });
+        this.logger.log(`Fila borrada en Google Sheets (${range})`);
+      } catch (error: any) {
+        this.logger.warn(`No se pudo eliminar en Google Sheets (${range}), pero se eliminó localmente.`, error?.message || error);
+      }
+    }
+
+    return true;
+  }
+
   private colIndexToLetter(index: number): string {
     let letter = '';
     let temp = index;

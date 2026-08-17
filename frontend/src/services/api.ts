@@ -73,6 +73,40 @@ export async function updateProductShowPrice(productId: string, showPrice: boole
   return res.json();
 }
 
+export async function updateProductVisibility(productId: string, visible: boolean, adminPassword: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/config/product-visibility`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${adminPassword}`
+    },
+    body: JSON.stringify({ productId, visible })
+  });
+  
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('Contraseña incorrecta');
+    throw new Error('Error al actualizar visibilidad del producto');
+  }
+  
+  return res.json();
+}
+
+export async function deleteProduct(productId: string, adminPassword: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/products/${productId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${adminPassword}`
+    }
+  });
+  
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('Contraseña incorrecta');
+    throw new Error('Error al eliminar el producto');
+  }
+  
+  return res.json();
+}
+
 export async function verifyAdminPassword(adminPassword: string): Promise<boolean> {
   const res = await fetch(`${API_BASE}/api/config/verify`, {
     method: 'POST',
@@ -91,10 +125,12 @@ export async function verifyAdminPassword(adminPassword: string): Promise<boolea
 export async function getProducts(
   search?: string,
   category?: string,
+  includeHidden?: boolean,
 ): Promise<ProductsApiResponse> {
   const params = new URLSearchParams();
   if (search) params.set('search', search);
   if (category) params.set('category', category);
+  if (includeHidden) params.set('includeHidden', 'true');
 
   const query = params.toString();
   return fetchApi<ProductsApiResponse>(`/api/products${query ? `?${query}` : ''}`);
@@ -112,10 +148,12 @@ export async function getCategories(): Promise<CategoriesApiResponse> {
 export async function clientFetchProducts(
   search?: string,
   category?: string,
+  includeHidden?: boolean,
 ): Promise<ProductsApiResponse> {
   const params = new URLSearchParams();
   if (search) params.set('search', search);
   if (category) params.set('category', category);
+  if (includeHidden) params.set('includeHidden', 'true');
 
   const query = params.toString();
   const res = await fetch(`${API_BASE}/api/products${query ? `?${query}` : ''}`);

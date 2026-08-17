@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Body, Patch, Headers, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Query, Body, Patch, Delete, Headers, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ConfigService } from '../config/config.service';
 
@@ -13,9 +13,11 @@ export class ProductsController {
   findAll(
     @Query('search') search?: string,
     @Query('category') category?: string,
+    @Query('includeHidden') includeHiddenQuery?: string,
   ) {
-    const products = this.productsService.findAll(search, category);
-    const categories = this.productsService.getCategories();
+    const includeHidden = includeHiddenQuery === 'true';
+    const products = this.productsService.findAll(search, category, includeHidden);
+    const categories = this.productsService.getCategories(includeHidden);
 
     return {
       data: products,
@@ -54,16 +56,7 @@ export class ProductsController {
     @Body() body: any,
     @Headers('authorization') authHeader: string,
   ) {
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Token no provisto');
-    }
-
-    const token = authHeader.split(' ')[1];
-    const adminPassword = process.env.ADMIN_PASSWORD || 'MadreTierra2026';
-
-    if (token !== adminPassword) {
-      throw new UnauthorizedException('Contraseña incorrecta');
-    }
+    this.verifyAuth(authHeader);
 
     const rawUrl = body?.imageUrl;
     const targetUrl = typeof rawUrl === 'string' ? rawUrl.trim() : '';
@@ -73,6 +66,34 @@ export class ProductsController {
       return { data: product, message: targetUrl ? 'Imagen actualizada exitosamente' : 'Imagen eliminada exitosamente' };
     } catch (err: any) {
       throw new HttpException(err?.message || 'Error al actualizar imagen', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete('products/:id')
+  async deleteProduct(
+    @Param('id') id: string,
+    @Headers('authorization') authHeader: string,
+  ) {
+    this.verifyAuth(authHeader);
+
+    try {
+      await this.productsService.deleteProduct(id);
+      return { success: true, message: 'Producto eliminado exitosamente' };
+    } catch (err: any) {
+      throw new HttpException(err?.message || 'Error al eliminar producto', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private verifyAuth(authHeader: string) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Token no provisto');
+    }
+
+    const token = authHeader.split(' ')[1];
+    const adminPassword = process.env.ADMIN_PASSWORD || 'madretierra2024';
+
+    if (token !== adminPassword) {
+      throw new UnauthorizedException('Contraseña incorrecta');
     }
   }
 }
